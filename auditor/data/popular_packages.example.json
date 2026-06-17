@@ -1,0 +1,4 @@
+{
+  "npm": ["lodash", "react", "express", "axios", "typescript", "vite", "next", "eslint", "webpack"],
+  "pip": ["requests", "flask", "django", "numpy", "pandas", "pytest", "fastapi", "sqlalchemy", "cryptography"]
+}

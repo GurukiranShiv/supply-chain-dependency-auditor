@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "supply-chain-dependency-auditor"
+version = "9.1.0"
+description = "Enterprise-style supply-chain dependency auditor with CLI, REST API, SBOM, SARIF, policy, provenance, and CI/CD hardening"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "Gurukiran Shivashankar"}]
+keywords = ["supply-chain", "security", "dependencies", "osv", "typosquatting", "sbom", "sarif", "sigstore", "provenance", "policy-as-code", "auto-remediation"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["build>=1.2", "twine>=5.0", "pytest>=8.0"]
+docs = ["mkdocs>=1.6", "mkdocs-material>=9.5"]
+
+[project.scripts]
+supply-chain-auditor = "auditor.cli:main"
+scda = "auditor.cli:main"
+supply-chain-auditor-api = "auditor.api_server:main"
+
+[tool.setuptools.packages.find]
+include = ["auditor*"]
+
+[tool.setuptools.package-data]
+auditor = ["data/*.json"]
+
+[project.urls]
+Homepage = "https://github.com/GurukiranShiv/supply-chain-dependency-auditor"
+Documentation = "https://gurukiranshiv.github.io/supply-chain-dependency-auditor/"
+Repository = "https://github.com/GurukiranShiv/supply-chain-dependency-auditor"
+Issues = "https://github.com/GurukiranShiv/supply-chain-dependency-auditor/issues"

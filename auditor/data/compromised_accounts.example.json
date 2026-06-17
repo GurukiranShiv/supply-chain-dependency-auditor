@@ -1,0 +1,15 @@
+{
+  "npm": [
+    "example-compromised-npm-user"
+  ],
+  "pip": [
+    "example compromised maintainer"
+  ],
+  "github": [
+    "example-compromised-owner",
+    "example-compromised-owner/example-repo"
+  ],
+  "domains": [
+    "example-compromised-domain.test"
+  ]
+}

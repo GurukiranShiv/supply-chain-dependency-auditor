@@ -1,0 +1,145 @@
+name: Supply Chain Auditor
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      auto_remediate:
+        description: "Create an automated remediation PR"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: scda-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  test-and-audit:
+    name: Test, audit, policy gate, and upload evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Production recommendation: pin third-party actions to full commit SHA.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install tool in editable mode
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Build dependency baseline for main branch scans
+        if: github.event_name == 'push'
+        run: supply-chain-auditor audit . --save-baseline baseline.json --no-scan --no-malware || true
+
+      - name: Run full supply-chain audit
+        run: |
+          supply-chain-auditor audit . \
+            --policy data/security_policy.example.json \
+            --policy-mode enforce \
+            --policy-report policy-results.json \
+            --policy-audit-log policy-audit.jsonl \
+            --provenance-policy data/provenance_policy.example.json \
+            --ci-hardening-report ci-hardening.json \
+            --sla-report sla-report.json \
+            --jira-export jira-import.csv \
+            --evidence-bundle evidence-bundle.json \
+            --json results.json \
+            --html report.html \
+            --sbom sbom.json \
+            --sarif results.sarif \
+            --remediation remediation.json
+
+      - name: Upload SARIF to GitHub Code Scanning
+        if: always() && hashFiles('results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: supply-chain-audit-evidence
+          path: |
+            results.json
+            report.html
+            sbom.json
+            results.sarif
+            remediation.json
+            policy-results.json
+            policy-audit.jsonl
+            ci-hardening.json
+            sla-report.json
+            jira-import.csv
+            evidence-bundle.json
+          if-no-files-found: ignore
+
+  auto-remediation-pr:
+    name: Optional automated remediation PR
+    if: github.event_name == 'workflow_dispatch' && inputs.auto_remediate == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install auditor
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Generate remediation plan
+        run: supply-chain-auditor audit . --remediation remediation.json --json results.json --sarif results.sarif || true
+
+      - name: Apply safe fixes and open PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          supply-chain-auditor fix . \
+            --remediation remediation.json \
+            --apply \
+            --validate-fix \
+            --create-branch \
+            --branch-name scda/auto-remediation \
+            --push \
+            --open-pr \
+            --base-branch main \
+            --pr-title "Automated supply chain dependency remediation" \
+            --fix-report fix-results.json

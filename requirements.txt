@@ -1,0 +1,2 @@
+# Zero required third-party dependencies. Uses Python standard library.
+# Optional: install and run Ollama locally to enable AUDITOR_AI_PROVIDER=ollama.

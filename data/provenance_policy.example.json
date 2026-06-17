@@ -1,0 +1,16 @@
+{
+  "schema": "supply-chain-auditor-provenance-policy-v1",
+  "require_registry_digest": true,
+  "sigstore": {
+    "enabled": false,
+    "required": false,
+    "cert_identity_regex": "https://github.com/YOUR_ORG/YOUR_REPO/.github/workflows/.+",
+    "cert_oidc_issuer": "https://token.actions.githubusercontent.com"
+  },
+  "slsa": {
+    "required": false,
+    "attestation_file": "attestations/example.intoto.jsonl",
+    "expected_builder_id": "https://github.com/actions/runner",
+    "expected_source_repository": "github.com/YOUR_ORG/YOUR_REPO"
+  }
+}

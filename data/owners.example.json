@@ -1,0 +1,7 @@
+{
+  "owners": {
+    "requests": {"owner": "platform-security", "team": "AppSec", "ticket_project": "SEC"},
+    "flask": {"owner": "web-platform", "team": "Application Platform", "ticket_project": "APPSEC"},
+    "reques7s": {"owner": "security-incident-response", "team": "PSIRT", "ticket_project": "INC"}
+  }
+}

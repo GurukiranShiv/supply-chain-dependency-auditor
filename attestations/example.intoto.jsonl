@@ -1,0 +1,1 @@
+{"_type":"https://in-toto.io/Statement/v1","predicateType":"https://slsa.dev/provenance/v1","subject":[{"name":"example","digest":{"sha256":"example"}}],"predicate":{"builder":{"id":"https://github.com/actions/runner"},"invocation":{"configSource":{"uri":"github.com/YOUR_ORG/YOUR_REPO"}}}}

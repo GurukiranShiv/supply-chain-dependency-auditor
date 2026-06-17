@@ -1,0 +1,85 @@
+{
+  "schema": "supply-chain-auditor-policy-v2",
+  "default_action": "allow",
+  "governance": {
+    "require_exception_expiry": true,
+    "require_exception_approver": true,
+    "require_exception_ticket": true
+  },
+  "allowlist": [
+    {
+      "package": "requests",
+      "ecosystem": "pip"
+    },
+    {
+      "package": "flask",
+      "ecosystem": "pip"
+    }
+  ],
+  "blocklist": [
+    {
+      "package": "reques7s",
+      "ecosystem": "pip"
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "EXAMPLE-DO-NOT-USE",
+      "package": "legacy-internal-package",
+      "ecosystem": "pip",
+      "max_risk_score": 59,
+      "expires": "2026-12-31T23:59:59+00:00",
+      "approved_by": "security-review-board@example.com",
+      "ticket": "SEC-1234",
+      "justification": "Temporary exception while owner migrates to approved package."
+    }
+  ],
+  "rules": [
+    {
+      "id": "block-critical-risk",
+      "when": {
+        "risk_score_gte": 85,
+        "not_allowlisted": true
+      },
+      "action": "block",
+      "message": "Critical supply-chain risk is not allowed."
+    },
+    {
+      "id": "block-high-risk",
+      "when": {
+        "risk_score_gte": 60,
+        "risk_score_lt": 85,
+        "not_allowlisted": true
+      },
+      "action": "block",
+      "message": "High supply-chain risk is not allowed without exception."
+    },
+    {
+      "id": "warn-malware-review-signals",
+      "when": {
+        "risk_score_gte": 35,
+        "signal_category_in": [
+          "Secret exposure",
+          "Malware behavior",
+          "Binary inspection"
+        ],
+        "signal_severity_in": [
+          "CRITICAL",
+          "HIGH"
+        ]
+      },
+      "action": "warn",
+      "message": "Malware-analysis indicators require security review when overall risk is elevated."
+    },
+    {
+      "id": "warn-medium-risk",
+      "when": {
+        "risk_score_gte": 35,
+        "risk_score_lt": 60,
+        "not_allowlisted": true
+      },
+      "action": "warn",
+      "message": "Medium supply-chain risk requires review."
+    }
+  ]
+}

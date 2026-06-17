@@ -1,0 +1,20 @@
+site_name: Supply Chain Dependency Auditor
+site_description: Enterprise-style supply-chain dependency audit CLI and API
+site_url: https://gurukiranshiv.github.io/supply-chain-dependency-auditor/
+repo_url: https://github.com/GurukiranShiv/supply-chain-dependency-auditor
+repo_name: GurukiranShiv/supply-chain-dependency-auditor
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - CLI Reference: cli.md
+  - REST API: api.md
+  - Policy Configuration: policy.md
+  - Release to PyPI: release.md
+  - Security Governance: SECURITY_GOVERNANCE.md
+  - Branch Protection: BRANCH_PROTECTION.md
+  - V8 Enterprise Gaps: V8_ENTERPRISE_GAPS.md
+theme:
+  name: mkdocs
+markdown_extensions:
+  - tables
+  - fenced_code

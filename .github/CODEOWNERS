@@ -1,0 +1,7 @@
+# Require security-owner review for policy, CI/CD, and scanner changes.
+/auditor/ @gshivashankar
+/.github/workflows/ @gshivashankar
+/data/ @gshivashankar
+/auditor/data/ @gshivashankar
+/pyproject.toml @gshivashankar
+/security.md @gshivashankar
