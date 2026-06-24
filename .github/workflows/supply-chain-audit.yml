@@ -37,7 +37,7 @@ jobs:
     steps:
       # Production recommendation: pin third-party actions to full commit SHA.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -112,7 +112,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v5
